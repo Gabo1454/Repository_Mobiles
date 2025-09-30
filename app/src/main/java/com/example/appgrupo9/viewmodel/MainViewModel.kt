@@ -32,7 +32,7 @@ class MainViewModel : ViewModel(){
         }
     }
 
-    //Funcion para navegar hacia arriba(padre)
+    //Funcion para navegar hacia arriba(padre).
     fun navigateUp() {
         CoroutineScope(Dispatchers.Main).launch {
             _navigationEvents.emit(NavigationEvent.NavigateUp)
