@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.compose.material3.adaptive:adaptive")
     // RxJava en Compose (opcional)
     implementation("androidx.compose.runtime:runtime-rxjava2")
+    implementation(libs.androidx.compose.material3.window.size.class1)
 
 
     testImplementation(libs.junit)
