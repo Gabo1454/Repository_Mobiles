@@ -73,4 +73,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // implementacion de  recursos nativos
+    //ubicacion
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
 }

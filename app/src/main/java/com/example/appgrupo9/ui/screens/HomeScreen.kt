@@ -1,33 +1,80 @@
 package com.example.appgrupo9.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.appgrupo9.R
 import com.example.appgrupo9.ui.utils.obtenerWindowsSizeClass
+import com.google.android.gms.location.LocationServices
 
-// --- Función adaptativa que decide qué layout mostrar según el tamaño de pantalla ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    val windowSizeClass = obtenerWindowsSizeClass()
-    when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> HomeScreenCompact()
-        WindowWidthSizeClass.Medium  -> HomeScreenCompact()
-        WindowWidthSizeClass.Expanded -> HomeScreenExpanded()
-        else -> HomeScreenCompact()
+    val context = LocalContext.current
+    var permisoConcedido by remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        permisoConcedido = isGranted
+    }
+
+    LaunchedEffect(Unit) {
+        val permiso = Manifest.permission.ACCESS_FINE_LOCATION
+        val estado = ContextCompat.checkSelfPermission(context, permiso)
+
+        if (estado != PackageManager.PERMISSION_GRANTED) {
+            launcher.launch(permiso)
+        } else {
+            permisoConcedido = true
+        }
+    }
+
+    LaunchedEffect(permisoConcedido) {
+        if (permisoConcedido) {
+            obtenerUbicacion(context) { location ->
+                location?.let {
+                    println("Latitud: ${it.latitude}, Longitud: ${it.longitude}")
+                    // Aquí puedes guardar, mostrar o usar la ubicación
+                }
+            }
+        }
+    }
+
+    if (permisoConcedido) {
+        val windowSizeClass = obtenerWindowsSizeClass()
+        when (windowSizeClass.widthSizeClass) {
+            WindowWidthSizeClass.Compact -> HomeScreenCompact()
+            WindowWidthSizeClass.Medium  -> HomeScreenCompact()
+            WindowWidthSizeClass.Expanded -> HomeScreenExpanded()
+            else -> HomeScreenCompact()
+        }
+    } else {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("📍 Solicitando permiso de ubicación...")
+        }
     }
 }
 
-// --- Layout para pantallas pequeñas (Compact) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenCompact() {
@@ -47,12 +94,11 @@ fun HomeScreenCompact() {
     }
 }
 
-// --- Layout para pantallas grandes (Expanded) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenExpanded() {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Me app Kotlin") }) }
+        topBar = { TopAppBar(title = { Text("Mi App Kotlin") }) }
     ) { innerPadding ->
         Row(
             modifier = Modifier
@@ -67,7 +113,6 @@ fun HomeScreenExpanded() {
     }
 }
 
-// --- Contenido común reutilizable ---
 @Composable
 fun DefaultHomeContent() {
     Text("¡Bienvenido!", color = MaterialTheme.colorScheme.onPrimary)
@@ -98,8 +143,6 @@ fun DefaultHomeContent() {
     }
 }
 
-// --- Previews para Android Studio ---
-
 @Preview(name = "Compact", widthDp = 360, heightDp = 800)
 @Composable
 fun PreviewCompact() {
@@ -109,11 +152,25 @@ fun PreviewCompact() {
 @Preview(name = "Medium", widthDp = 600, heightDp = 800)
 @Composable
 fun PreviewMedium() {
-    HomeScreenCompact() // o un layout específico para Medium si lo tienes
+    HomeScreenCompact()
 }
 
 @Preview(name = "Expanded", widthDp = 840, heightDp = 900)
 @Composable
 fun PreviewExpanded() {
     HomeScreenExpanded()
+}
+
+// --- Función para obtener la ubicación ---
+fun obtenerUbicacion(context: Context, onUbicacionObtenida: (Location?) -> Unit) {
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    try {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                onUbicacionObtenida(location)
+            }
+    } catch (e: SecurityException) {
+        onUbicacionObtenida(null)
+    }
 }
