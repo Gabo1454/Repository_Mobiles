@@ -6,7 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.appgrupo9.ui.screens.HomeScreen2
+import com.example.appgrupo9.ui.screens.HomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?){
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 //Llamamos a HomeScreen, que ya define toda la UI
-                HomeScreen2()
+                HomeScreen()
             }
         }
     }
@@ -25,6 +25,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview(){
     MaterialTheme {
-        HomeScreen2()
+        HomeScreen()
     }
 }

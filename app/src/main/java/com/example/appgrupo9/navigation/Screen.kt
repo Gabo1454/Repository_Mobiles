@@ -1,5 +1,5 @@
 package com.example.appgrupo9.navigation
-
+//sirve para manejar la navegación desde ViewModels o controladores
 sealed class Screen(val route: String) {
     /*
     * Rutas simples sin argumentos :  Usamos data object
