@@ -55,8 +55,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // MVVM: integración de ViewModel con Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
     // LiveData en Compose
     implementation("androidx.compose.runtime:runtime-livedata")
     // Adaptive layouts (opcional, tablets/foldables)
