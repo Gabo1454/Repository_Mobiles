@@ -17,7 +17,7 @@ import com.example.appgrupo9.ui.utils.obtenerWindowsSizeClass
 // --- Función adaptativa que decide qué layout mostrar según el tamaño de pantalla ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen2() {
+fun HomeScreen() {
     val windowSizeClass = obtenerWindowsSizeClass()
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> HomeScreenCompact()
@@ -52,7 +52,7 @@ fun HomeScreenCompact() {
 @Composable
 fun HomeScreenExpanded() {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Mi App Kotlin") }) }
+        topBar = { TopAppBar(title = { Text("Me app Kotlin") }) }
     ) { innerPadding ->
         Row(
             modifier = Modifier
