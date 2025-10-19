@@ -4,42 +4,42 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.material3.ModalNavigationDrawer
-
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HamburgerMenuButton(isOpen: MutableState<Boolean>) {
-    IconButton(onClick = {isOpen.value = !isOpen.value}) {
-        Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+fun HamburgerMenuButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = "Abrir menú"
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SideMenu(
-    isOpen: MutableState<Boolean>,
     drawerContent: @Composable ColumnScope.() -> Unit,
-    mainContent: @Composable () -> Unit
+    mainContent: @Composable (openDrawer: () -> Unit) -> Unit
 ) {
-    val drawerState = rememberDrawerState(
-        if (isOpen.value) DrawerValue.Open else DrawerValue.Closed
-    )
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            Column { drawerContent() }
-        },
-        content = {
-            mainContent()
+            ModalDrawerSheet {
+                Column { drawerContent() }
+            }
         }
-    )
+    ) {
+        mainContent {
+            scope.launch {
+                if (drawerState.isClosed) drawerState.open() else drawerState.close()
+            }
+        }
+    }
 }
