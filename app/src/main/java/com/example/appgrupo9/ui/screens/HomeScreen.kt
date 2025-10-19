@@ -8,6 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
@@ -23,9 +26,19 @@ import com.example.appgrupo9.R
 import com.example.appgrupo9.ui.utils.obtenerWindowsSizeClass
 import com.google.android.gms.location.LocationServices
 
+// --- Función adaptativa que decide qué layout mostrar según el tamaño de pantalla ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
+    val windowSizeClass = obtenerWindowsSizeClass()
+
+    when (windowSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> HomeScreenCompact()
+        WindowWidthSizeClass.Medium  -> HomeScreenCompact()
+        WindowWidthSizeClass.Expanded -> HomeScreenExpanded()
+        else -> HomeScreenCompact()
+    }
+    //Acceso a ubicacion
     val context = LocalContext.current
     var permisoConcedido by remember { mutableStateOf(false) }
 
@@ -73,14 +86,76 @@ fun HomeScreen() {
             Text("📍 Solicitando permiso de ubicación...")
         }
     }
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun GlobalScaffold(content: @Composable (PaddingValues) -> Unit){
+    Scaffold (
+        //barra superior global
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        //Logo a la izquierda
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_level_up),
+                            contentDescription = "Logo LEVEL-UP",
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(40.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // Nombre de la tienda
+                        Text(
+                            text = "LEVEL-UP GAMER",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f)) //Empujar iconos a la derecha
+
+                        //Icono de busqueda sin utilidad de momento
+                        IconButton(onClick = {/*Desplegar barra*/}) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Buscar"
+                            )
+                        }
+
+                        //Icono de carrito sin funcionalidad
+                        IconButton(onClick = {/*Abrir carrito*/}) {
+                            Icon(
+                                imageVector = Icons.Default.ShoppingCart,
+                                contentDescription = "Carrito"
+                            )
+                        }
+                    }
+                },
+                //Colores
+                /*
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ) */
+            )
+        },
+        content = content
+    )
+}
+
+
+// --- Layout para pantallas pequeñas (Compact) ---
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun HomeScreenCompact() {
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("Mi App Kotlin") }) }
-    ) { innerPadding ->
+    GlobalScaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -92,14 +167,13 @@ fun HomeScreenCompact() {
             DefaultHomeContent()
         }
     }
-}
+    }
 
+// --- Layout para pantallas grandes (Expanded) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenExpanded() {
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("Mi App Kotlin") }) }
-    ) { innerPadding ->
+    GlobalScaffold { innerPadding ->
         Row(
             modifier = Modifier
                 .padding(innerPadding)
@@ -113,6 +187,7 @@ fun HomeScreenExpanded() {
     }
 }
 
+// --- Contenido común reutilizable ---
 @Composable
 fun DefaultHomeContent() {
     Text("¡Bienvenido!", color = MaterialTheme.colorScheme.onPrimary)
@@ -143,6 +218,8 @@ fun DefaultHomeContent() {
     }
 }
 
+// --- Previews para Android Studio ---
+
 @Preview(name = "Compact", widthDp = 360, heightDp = 800)
 @Composable
 fun PreviewCompact() {
@@ -152,7 +229,7 @@ fun PreviewCompact() {
 @Preview(name = "Medium", widthDp = 600, heightDp = 800)
 @Composable
 fun PreviewMedium() {
-    HomeScreenCompact()
+    HomeScreenCompact() // o un layout específico para Medium si lo tienes
 }
 
 @Preview(name = "Expanded", widthDp = 840, heightDp = 900)
