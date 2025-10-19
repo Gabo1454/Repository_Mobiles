@@ -151,21 +151,31 @@ fun UbicacionInfo(ubicacion: Location?) {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenWithDrawer(viewModel: HomeViewModel? = null) {
-    val isDrawerOpen = remember { mutableStateOf(false) }
-
+fun HomeScreenWithDrawer(viewModel: HomeViewModel) {
     SideMenu(
-        isOpen = isDrawerOpen,
         drawerContent = {
-            Text("Sección 1")
-            Text("Sección 2")
+            Text("Inicio")
+            Text("Configuración")
+            Text("Perfil")
+            Text("Cerrar sesión")
         },
-        mainContent = {
-            GlobalScaffold {
-                Column(Modifier.fillMaxSize()) {
-                    HamburgerMenuButton(isDrawerOpen)
-                    // Aquí va el resto del contenido de la página
+        mainContent = { openDrawer ->
+            // Usamos GlobalScaffold para mantener la barra superior
+            GlobalScaffold { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Botón de hamburguesa debajo de la barra
+                    HamburgerMenuButton(onClick = openDrawer)
+
+                    // Contenido principal de la pantalla
+                    DefaultHomeContent(viewModel.ubicacion.collectAsState(initial = null).value)
                 }
             }
         }
