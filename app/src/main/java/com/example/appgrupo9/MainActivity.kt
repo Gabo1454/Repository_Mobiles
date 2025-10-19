@@ -1,30 +1,28 @@
 package com.example.appgrupo9
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.appgrupo9.ui.screens.HomeScreen
+import com.example.appgrupo9.ui.screens.HomeScreenWithDrawer
+import com.example.appgrupo9.viewmodel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?){
+
+    // Crear ViewModel
+    private val homeViewModel: HomeViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             MaterialTheme {
-                //Llamamos a HomeScreen, que ya define toda la UI
-                HomeScreen()
+                // Llamamos al composable con drawer
+                HomeScreenWithDrawer(viewModel = homeViewModel)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview(){
-    MaterialTheme {
-        HomeScreen()
     }
 }

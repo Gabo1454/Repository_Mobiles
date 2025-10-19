@@ -69,7 +69,8 @@ dependencies {
     // RxJava en Compose (opcional)
     implementation("androidx.compose.runtime:runtime-rxjava2")
     implementation(libs.androidx.compose.material3.window.size.class1)
-
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation("androidx.compose.material3:material3:1.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
