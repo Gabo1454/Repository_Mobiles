@@ -42,10 +42,10 @@ fun HomeScreen(viewModel: HomeViewModel) {
 
     //Elegir layout segun tamaño de pantalla
     when (windowSizeClass.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> HomeScreenCompact(ubicacion.value)
-        WindowWidthSizeClass.Medium  -> HomeScreenCompact(ubicacion.value)
+        WindowWidthSizeClass.Compact,
+        WindowWidthSizeClass.Medium -> HomeScreenWithDrawer(viewModel)
         WindowWidthSizeClass.Expanded -> HomeScreenExpanded(ubicacion.value)
-        else -> HomeScreenCompact(ubicacion.value)
+        else -> HomeScreenWithDrawer(viewModel)
     }
 
 
@@ -149,35 +149,21 @@ fun UbicacionInfo(ubicacion: Location?) {
     }
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenWithDrawer(viewModel: HomeViewModel) {
-    SideMenu(
-        drawerContent = {
-            Text("Inicio")
-            Text("Configuración")
-            Text("Perfil")
-            Text("Cerrar sesión")
-        },
-        mainContent = { openDrawer ->
-            // Usamos GlobalScaffold para mantener la barra superior
-            GlobalScaffold { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Botón de hamburguesa debajo de la barra
-                    HamburgerMenuButton(onClick = openDrawer)
-
-                    // Contenido principal de la pantalla
-                    DefaultHomeContent(viewModel.ubicacion.collectAsState(initial = null).value)
-                }
+    SideMenu { openDrawer ->
+        GlobalScaffold { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                HamburgerMenuButton(onClick = openDrawer)
+                DefaultHomeContent(viewModel.ubicacion.collectAsState(initial = null).value)
             }
         }
-    )
+    }
 }
