@@ -3,7 +3,6 @@ package com.example.appgrupo9.ui.screens
 import android.location.Location
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
@@ -13,23 +12,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.appgrupo9.R
-import com.example.appgrupo9.ui.components.global.GlobalScaffold
-import com.example.appgrupo9.ui.utils.obtenerWindowsSizeClass
-import com.example.appgrupo9.viewmodel.HomeViewModel
-import androidx.compose.runtime.Composable
 import com.example.appgrupo9.ui.components.global.HamburgerMenuButton
 import com.example.appgrupo9.ui.components.global.SideMenu
+import com.example.appgrupo9.ui.utils.obtenerWindowsSizeClass
+import com.example.appgrupo9.viewmodel.HomeViewModel
 
-// --- Función adaptativa que decide qué layout mostrar según el tamaño de pantalla ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, navController: NavHostController) {
     val windowSizeClass = obtenerWindowsSizeClass()
     val permisoConcedido = viewModel.permisoConcedido.collectAsState(initial = false)
     val ubicacion = viewModel.ubicacion.collectAsState(initial = null)
 
-    // Si no hay permiso aún, mostrar mensaje
     if (!permisoConcedido.value) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -40,22 +37,24 @@ fun HomeScreen(viewModel: HomeViewModel) {
         return
     }
 
-    //Elegir layout segun tamaño de pantalla
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact,
-        WindowWidthSizeClass.Medium -> HomeScreenWithDrawer(viewModel)
+        WindowWidthSizeClass.Medium -> HomeScreenWithDrawer(viewModel, navController)
         WindowWidthSizeClass.Expanded -> HomeScreenExpanded(ubicacion.value)
-        else -> HomeScreenWithDrawer(viewModel)
+        else -> HomeScreenWithDrawer(viewModel, navController)
     }
-
-
 }
 
-// --- Layout para pantallas pequeñas (Compact) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenCompact(ubicacion: android.location.Location?) {
-    GlobalScaffold { innerPadding ->
+fun HomeScreenCompact(ubicacion: Location?) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("LEVEL-UP GAMER") }
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -67,13 +66,18 @@ fun HomeScreenCompact(ubicacion: android.location.Location?) {
             DefaultHomeContent(ubicacion)
         }
     }
-    }
+}
 
-// --- Layout para pantallas grandes (Expanded) ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenExpanded(ubicacion: android.location.Location?) {
-    GlobalScaffold { innerPadding ->
+fun HomeScreenExpanded(ubicacion: Location?) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("LEVEL-UP GAMER") }
+            )
+        }
+    ) { innerPadding ->
         Row(
             modifier = Modifier
                 .padding(innerPadding)
@@ -87,31 +91,43 @@ fun HomeScreenExpanded(ubicacion: android.location.Location?) {
     }
 }
 
-// --- Previews para Android Studio ---
-
-@Preview(name = "Compact", widthDp = 360, heightDp = 800)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreviewCompact() {
-    HomeScreenCompact(ubicacion = null)
+fun HomeScreenWithDrawer(viewModel: HomeViewModel, navController: NavHostController) {
+    SideMenu(navController = navController) { openDrawer ->
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            HamburgerMenuButton(onClick = openDrawer)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("LEVEL-UP GAMER")
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                DefaultHomeContent(viewModel.ubicacion.collectAsState(initial = null).value)
+            }
+        }
+    }
 }
 
-@Preview(name = "Medium", widthDp = 600, heightDp = 800)
 @Composable
-fun PreviewMedium() {
-    HomeScreenCompact(ubicacion = null) // o un layout específico para Medium si lo tienes
-}
-
-@Preview(name = "Expanded", widthDp = 840, heightDp = 900)
-@Composable
-fun PreviewExpanded() {
-    HomeScreenExpanded(ubicacion = null)
-}
-
-@Composable
-fun DefaultHomeContent(ubicacion: android.location.Location?) {
+fun DefaultHomeContent(ubicacion: Location?) {
     Text("¡Bienvenido!", color = MaterialTheme.colorScheme.onPrimary)
 
-    // Mostrar ubicación si existe
     ubicacion?.let {
         Text("Lat: ${it.latitude}, Lon: ${it.longitude}")
     }
@@ -142,28 +158,20 @@ fun DefaultHomeContent(ubicacion: android.location.Location?) {
     }
 }
 
+@Preview(name = "Compact", widthDp = 360, heightDp = 800)
 @Composable
-fun UbicacionInfo(ubicacion: Location?) {
-    ubicacion?.let {
-        Text("Lat: ${it.latitude}, Lon: ${it.longitude}")
-    }
+fun PreviewCompact() {
+    HomeScreenCompact(ubicacion = null)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview(name = "Medium", widthDp = 600, heightDp = 800)
 @Composable
-fun HomeScreenWithDrawer(viewModel: HomeViewModel) {
-    SideMenu { openDrawer ->
-        GlobalScaffold { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                HamburgerMenuButton(onClick = openDrawer)
-                DefaultHomeContent(viewModel.ubicacion.collectAsState(initial = null).value)
-            }
-        }
-    }
+fun PreviewMedium() {
+    HomeScreenCompact(ubicacion = null)
+}
+
+@Preview(name = "Expanded", widthDp = 840, heightDp = 900)
+@Composable
+fun PreviewExpanded() {
+    HomeScreenExpanded(ubicacion = null)
 }

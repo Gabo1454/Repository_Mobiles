@@ -8,33 +8,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class HomeViewModel : ViewModel() {
+
     private val _ubicacion = MutableStateFlow<Location?>(null)
     val ubicacion: StateFlow<Location?> = _ubicacion
 
     private val _permisoConcedido = MutableStateFlow(false)
     val permisoConcedido: StateFlow<Boolean> = _permisoConcedido
 
-    //Actualizar eñ estado de permiso
-    fun actualizarPermisoConcedido(valor: Boolean) {
+    fun actualizarPermiso(valor: Boolean, context: Context) {
         _permisoConcedido.value = valor
-    }
-    //Guardar ubicacion obtenida
-    fun setUbicacion(location: Location?) {
-        _ubicacion.value = location
+        if (valor) {
+            obtenerUbicacion(context)
+        }
     }
 
-    // --- Función para obtener la ubicación ---
-    fun obtenerUbicacion(context: Context, onUbicacionObtenida: (Location?) -> Unit) {
+    private fun obtenerUbicacion(context: Context) {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         try {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
-                    onUbicacionObtenida(location)
+                    _ubicacion.value = location
                 }
         } catch (e: SecurityException) {
-            onUbicacionObtenida(null)
+            _ubicacion.value = null
         }
     }
-
 }

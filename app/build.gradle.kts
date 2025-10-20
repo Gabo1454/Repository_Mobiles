@@ -85,8 +85,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // implementacion de  recursos nativos
-    //ubicacion
+    // ubicacion
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    // importacion
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
 
 
 }
