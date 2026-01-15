@@ -3,33 +3,53 @@ package com.example.appgrupo9.viewmodel
 import android.content.Context
 import android.location.Location
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.appgrupo9.data.datastore.UserPreferences
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val userPreferences: UserPreferences
+) : ViewModel() {
+
+    // --- Ubicación ---
     private val _ubicacion = MutableStateFlow<Location?>(null)
     val ubicacion: StateFlow<Location?> = _ubicacion
 
+    // --- Permiso de ubicación ---
     private val _permisoConcedido = MutableStateFlow(false)
     val permisoConcedido: StateFlow<Boolean> = _permisoConcedido
 
-    //Actualizar eñ estado de permiso
+    // --- Estado de sesión ---
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
+    init {
+        // Lee persistencia de login
+        viewModelScope.launch {
+            userPreferences.isLoggedIn.collect { logged ->
+                _isLoggedIn.value = logged
+            }
+        }
+    }
+
+    // --- Métodos ---
     fun actualizarPermisoConcedido(valor: Boolean) {
         _permisoConcedido.value = valor
     }
-    //Guardar ubicacion obtenida
+
     fun setUbicacion(location: Location?) {
         _ubicacion.value = location
     }
 
-    // --- Función para obtener la ubicación ---
     fun obtenerUbicacion(context: Context, onUbicacionObtenida: (Location?) -> Unit) {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         try {
             fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
+                .addOnSuccessListener { location ->
                     onUbicacionObtenida(location)
                 }
         } catch (e: SecurityException) {
@@ -37,4 +57,9 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            userPreferences.setLoggedIn(false)
+        }
+    }
 }

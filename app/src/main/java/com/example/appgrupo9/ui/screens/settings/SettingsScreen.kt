@@ -1,4 +1,4 @@
-package com.example.appgrupo9.ui.screens
+package com.example.appgrupo9.ui.screens.settings
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*

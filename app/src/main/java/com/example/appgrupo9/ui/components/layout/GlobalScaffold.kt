@@ -1,4 +1,4 @@
-package com.example.appgrupo9.ui.components.global
+package com.example.appgrupo9.ui.components.layout
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues

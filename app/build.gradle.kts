@@ -49,7 +49,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:<última versión>")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-
+    // DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation("androidx.compose.material3:material3:<última versión>")
     implementation("androidx.compose.material:material-icons-extended:<última versión>")
@@ -75,6 +76,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.window.size.class1)
     implementation(libs.androidx.compose.foundation.layout)
     implementation("androidx.compose.material3:material3:1.4.0")
+    implementation(libs.androidx.ui)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

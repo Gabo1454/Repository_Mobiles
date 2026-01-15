@@ -2,7 +2,7 @@ package com.example.appgrupo9.viewmodel
 
 import UsuarioUiState
 import androidx.lifecycle.ViewModel
-import com.example.appgrupo9.model.UsuarioErrores
+import com.example.appgrupo9.domain.validation.UsuarioErrores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

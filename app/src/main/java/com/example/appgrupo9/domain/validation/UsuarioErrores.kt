@@ -1,4 +1,4 @@
-package com.example.appgrupo9.model
+package com.example.appgrupo9.domain.validation
 
 data class UsuarioErrores (
     val nombre: String? = null,

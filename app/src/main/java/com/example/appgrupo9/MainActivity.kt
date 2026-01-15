@@ -4,75 +4,35 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import com.example.appgrupo9.ui.screens.HomeScreenWithDrawer
-import com.example.appgrupo9.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.navigation.compose.rememberNavController
+import com.example.appgrupo9.data.datastore.UserPreferences
+import com.example.appgrupo9.navigation.AppNavGraph
+import com.example.appgrupo9.ui.theme.GaymerTheme
+
+// 🔹 Esta extensión ya existe en tu DataStore, no necesitas otra
+// private val Context.userDataStore by preferencesDataStore(name = "user_prefs")
+// ya tienes: private val Context.dataStore by preferencesDataStore("user_prefs") en UserPreferences
 
 class MainActivity : ComponentActivity() {
 
-    // Crear ViewModel
-    private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // 🔹 Inicializa UserPreferences usando la propiedad 'dataStore' que ya existe
+        userPreferences = UserPreferences(this)
+
         setContent {
-            MaterialTheme {
-                // Llamamos al composable con drawer
-                HomeScreenWithDrawer(viewModel
-                = homeViewModel)
-            }
-        }
-    }
-}
+            GaymerTheme {
+                val navController = rememberNavController()
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HamburgerMenuButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        Icon(
-            imageVector = Icons.Default.Menu,
-            contentDescription = "Abrir menú"
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SideMenu(
-    drawerContent: @Composable ColumnScope.() -> Unit,
-    mainContent: @Composable (openDrawer: () -> Unit) -> Unit
-) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Column { drawerContent() }
-            }
-        }
-    ) {
-        mainContent {
-            scope.launch {
-                if (drawerState.isClosed) drawerState.open() else drawerState.close()
+                AppNavGraph(
+                    navController = navController,
+                    userPreferences = userPreferences // ahora compila
+                )
             }
         }
     }

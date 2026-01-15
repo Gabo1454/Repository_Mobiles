@@ -1,4 +1,4 @@
-import com.example.appgrupo9.model.UsuarioErrores
+import com.example.appgrupo9.domain.validation.UsuarioErrores
 
 //Modelo principal que representa el estado del formulario del usuario
 data class UsuarioUiState(
