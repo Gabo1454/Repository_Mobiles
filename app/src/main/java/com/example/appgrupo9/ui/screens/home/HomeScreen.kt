@@ -33,7 +33,6 @@ fun HomeScreen(
     val context = LocalContext.current
     val windowSizeClass = obtenerWindowsSizeClass()
 
-    // ViewModel con Factory
     val homeViewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(userPreferences)
     )
@@ -48,9 +47,7 @@ fun HomeScreen(
     ) { granted ->
         homeViewModel.actualizarPermisoConcedido(granted)
         if (granted) {
-            homeViewModel.obtenerUbicacion(context) {
-                homeViewModel.setUbicacion(it)
-            }
+            homeViewModel.obtenerUbicacion(context) { homeViewModel.setUbicacion(it) }
         }
     }
 
@@ -60,13 +57,11 @@ fun HomeScreen(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
-        if (estado == PackageManager.PERMISSION_GRANTED) {
-            homeViewModel.actualizarPermisoConcedido(true)
-            homeViewModel.obtenerUbicacion(context) {
-                homeViewModel.setUbicacion(it)
-            }
-        } else {
+        if (estado != PackageManager.PERMISSION_GRANTED) {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            homeViewModel.actualizarPermisoConcedido(true)
+            homeViewModel.obtenerUbicacion(context) { homeViewModel.setUbicacion(it) }
         }
     }
 
@@ -80,6 +75,7 @@ fun HomeScreen(
         return
     }
 
+    // Mostrar Home principal según tamaño de pantalla
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact,
         WindowWidthSizeClass.Medium -> {
@@ -111,65 +107,37 @@ fun HomeScreenWithDrawer(
     onLogout: () -> Unit,
     isLoggedIn: Boolean
 ) {
-    SideMenu(
-        isLoggedIn = isLoggedIn,
-        onLoginClick = onLogin,
-        onLogoutClick = onLogout,
-        onPerfilClick = onPerfil
-    ) { openDrawer ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Botón para abrir menú lateral
-            Text(
-                text = "🍔 Abrir menú",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable { openDrawer() }
-            )
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
-            // Contenido principal siempre visible
-            Text(
-                text = "🌟 Bienvenido a la app!",
-                modifier = Modifier.padding(16.dp)
-            )
+        // Botón para abrir menú lateral
+        Text(
+            text = "🍔 Abrir menú",
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .clickable { /* abrir drawer si lo tienes */ }
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        // Contenido principal siempre visible
+        Text(
+            text = "🌟 Bienvenido a la app!",
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-            // Opciones rápidas
-            Button(onClick = onExplorar, modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text("Explorar")
-            }
-
-            if (isLoggedIn) {
-                Button(onClick = onPerfil, modifier = Modifier.padding(16.dp)) {
-                    Text("Perfil")
-                }
-            }
+        // Opciones rápidas
+        Button(onClick = onExplorar, modifier = Modifier.padding(bottom = 16.dp)) {
+            Text("Explorar")
         }
-    }
-}
 
-@Composable
-fun SideMenu(
-    isLoggedIn: Boolean,
-    onLoginClick: () -> Unit,
-    onLogoutClick: () -> Unit,
-    onPerfilClick: () -> Unit,
-    content: @Composable ((openDrawer: () -> Unit) -> Unit)
-) {
-    content {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text("Menú lateral", style = androidx.compose.material3.MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Siempre visible
-            Button(onClick = { /* Explorar */ }) { Text("Explorar") }
-
-            // Opciones de perfil si hay sesión
-            if (isLoggedIn) {
-                Button(onClick = onPerfilClick) { Text("Perfil") }
-                Button(onClick = onLogoutClick) { Text("Cerrar sesión") }
-            } else {
-                Button(onClick = onLoginClick) { Text("Iniciar sesión") }
+        if (isLoggedIn) {
+            Button(onClick = onPerfil, modifier = Modifier.padding(bottom = 16.dp)) {
+                Text("Perfil")
+            }
+            Button(onClick = onLogout) {
+                Text("Cerrar sesión")
+            }
+        } else {
+            Button(onClick = onLogin) {
+                Text("Iniciar sesión")
             }
         }
     }
