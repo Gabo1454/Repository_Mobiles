@@ -4,37 +4,29 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
+private val GamerDarkColorScheme = darkColorScheme(
     primary = NeonGreen,
     secondary = ElectricBlue,
     background = DarkBackground,
     surface = DarkSurface,
-    onPrimary = Color.Black,
-    onSecondary = Color.Black,
+    onPrimary = Color.Black,       // Texto negro sobre botones verdes
+    onSecondary = Color.White,     // Texto blanco sobre botones azules
     onBackground = TextPrimaryDark,
-    onSurface = TextPrimaryDark
-)
+    onSurface = TextPrimaryDark,
 
-private val LightColorScheme = lightColorScheme(
-    primary = ElectricBlue,
-    secondary = NeonGreen,
-    background = LightBackground,
-    surface = LightSurface,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = TextPrimaryLight,
-    onSurface = TextPrimaryLight
+    // ESTO ARREGLA TUS TEXTFIELDS:
+    onSurfaceVariant = NeonGreen,  // El label (etiqueta) será verde neón
+    outline = ElectricBlue,        // El borde del cuadro será azul eléctrico
+    error = ErrorRed
 )
 
 @Composable
 fun GaymerTheme(
-    darkTheme: Boolean = true, // dark por defecto
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
+    // Forzamos el modo oscuro siempre para mantener la estética gamer
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = GamerDarkColorScheme,
         typography = Typography,
         content = content
     )

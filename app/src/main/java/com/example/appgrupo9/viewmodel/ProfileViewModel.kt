@@ -10,16 +10,24 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val userPreferences: UserPreferences) : ViewModel() {
 
-    private val _username = MutableStateFlow("UsuarioDemo")
+    private val _username = MutableStateFlow("Cargando...")
     val username: StateFlow<String> = _username
-
-    private val _email = MutableStateFlow("demo@email.com")
-    val email: StateFlow<String> = _email
 
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     init {
+        // 1. Observar el nombre de usuario (ESTO FALTABA)
+        viewModelScope.launch {
+            userPreferences.username.collect { name ->
+                // Si el nombre no es nulo ni vacío, lo actualizamos
+                if (!name.isNullOrEmpty()) {
+                    _username.value = name
+                }
+            }
+        }
+
+        // 2. Observar el estado de la sesión
         viewModelScope.launch {
             userPreferences.isLoggedIn.collect { logged ->
                 _isLoggedIn.value = logged
@@ -29,7 +37,7 @@ class ProfileViewModel(private val userPreferences: UserPreferences) : ViewModel
 
     fun logout() {
         viewModelScope.launch {
-            userPreferences.setLoggedIn(false)
+            userPreferences.logout()
         }
     }
 }

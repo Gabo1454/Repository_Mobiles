@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -26,58 +26,53 @@ import com.example.appgrupo9.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GlobalScaffold(content: @Composable (PaddingValues) -> Unit){
-    Scaffold (
-        //barra superior global
+fun GlobalScaffold(
+    // Parámetro para el botón de hamburguesa o botón de retroceso
+    navigationIcon: @Composable (() -> Unit)? = null,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
         topBar = {
             TopAppBar(
+                // Icono a la izquierda (Hamburguesa)
+                navigationIcon = {
+                    navigationIcon?.invoke()
+                },
+                // Contenido central (Logo + Nombre)
                 title = {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ){
-                        //Logo a la izquierda
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.logo_level_up),
                             contentDescription = "Logo LEVEL-UP",
-                            modifier = Modifier
-                                .height(40.dp)
-                                .width(40.dp)
+                            modifier = Modifier.size(40.dp)
                         )
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        // Nombre de la tienda
                         Text(
                             text = "LEVEL-UP GAMER",
                             style = MaterialTheme.typography.titleMedium
                         )
-
-                        Spacer(modifier = Modifier.weight(1f)) //Empujar iconos a la derecha
-
-                        //Icono de busqueda sin utilidad de momento
-                        IconButton(onClick = {/*Desplegar barra*/}) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Buscar"
-                            )
-                        }
-
-                        //Icono de carrito sin funcionalidad
-                        IconButton(onClick = {/*Abrir carrito*/}) {
-                            Icon(
-                                imageVector = Icons.Default.ShoppingCart,
-                                contentDescription = "Carrito"
-                            )
-                        }
                     }
                 },
-                //Colores
-                /*
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                ) */
+                // Iconos a la derecha (Búsqueda y Carrito)
+                actions = {
+                    IconButton(onClick = { /* Acción de búsqueda */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Buscar"
+                        )
+                    }
+
+                    IconButton(onClick = { /* Acción de carrito */ }) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Carrito"
+                        )
+                    }
+                }
             )
         },
         content = content

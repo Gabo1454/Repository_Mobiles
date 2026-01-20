@@ -2,19 +2,17 @@ package com.example.appgrupo9.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark – gamer
-val DarkBackground = Color(0xFF0B0F14)
-val DarkSurface = Color(0xFF111827)
+// Fondo y Superficies (Dark Mode)
+val DarkBackground = Color(0xFF0D1117) // Gris oscuro azulado
+val DarkSurface = Color(0xFF161B22)    // Un poco más claro para tarjetas/inputs
 
-val NeonGreen = Color(0xFF00FF9C)
-val ElectricBlue = Color(0xFF00B3FF)
+// Colores Identitarios
+val NeonGreen = Color(0xFF39FF14)      // Verde Neón clásico
+val ElectricBlue = Color(0xFF2E9AFE)   // Azul vibrante
 
-val TextPrimaryDark = Color(0xFFE5E7EB)
-val TextSecondaryDark = Color(0xFF9CA3AF)
+// Texto para fondo oscuro
+val TextPrimaryDark = Color(0xFFF0F6FC)   // Blanco brillante
+val TextSecondaryDark = Color(0xFF8B949E) // Gris suave para pistas/hints
 
-// Light (por accesibilidad)
-val LightBackground = Color(0xFFF9FAFB)
-val LightSurface = Color(0xFFFFFFFF)
-
-val TextPrimaryLight = Color(0xFF111827)
-val TextSecondaryLight = Color(0xFF374151)
+// Colores de Error
+val ErrorRed = Color(0xFFFF4D4D)

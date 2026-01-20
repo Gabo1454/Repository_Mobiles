@@ -25,7 +25,7 @@ class HomeViewModel(
     // --- Estado de sesión ---
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
-
+//especificar
     init {
         // Lee persistencia de login
         viewModelScope.launch {

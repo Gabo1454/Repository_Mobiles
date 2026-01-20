@@ -26,10 +26,11 @@ fun HamburgerMenuButton(onClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SideMenu(
-    isLoggedIn: Boolean,               // 🔥 nuevo
+    isLoggedIn: Boolean,
     onLoginClick: () -> Unit,
-    onPerfilClick: () -> Unit,         // 🔥 nuevo
-    onLogoutClick: () -> Unit,         // 🔥 nuevo
+    onRegisterClick: () -> Unit,       // 🔥 AGREGADO
+    onPerfilClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     mainContent: @Composable (openDrawer: () -> Unit) -> Unit
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -80,8 +81,12 @@ fun SideMenu(
                                 onLoginClick()
                             }
                         }
+                        // 🔥 ACTUALIZADO: Botón Crear Cuenta funcionando
                         DrawerItemWithIcon("Crear cuenta", { Icon(Icons.Default.PersonAdd, null) }) {
-                            // pendiente
+                            scope.launch {
+                                drawerState.close()
+                                onRegisterClick()
+                            }
                         }
                     } else {
                         DrawerItemWithIcon("Perfil", { Icon(Icons.Default.AccountCircle, null) }) {
@@ -123,7 +128,8 @@ fun DrawerItemWithIcon(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth() // Asegura que el contenido use el ancho
         ) {
             icon()
             Text(text, style = MaterialTheme.typography.titleMedium)

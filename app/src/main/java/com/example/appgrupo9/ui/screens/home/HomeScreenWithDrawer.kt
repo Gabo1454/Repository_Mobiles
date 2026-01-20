@@ -1,12 +1,11 @@
 package com.example.appgrupo9.ui.screens.home
 
 import android.location.Location
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.appgrupo9.ui.components.layout.GlobalScaffold
+import androidx.compose.ui.unit.dp
 import com.example.appgrupo9.ui.components.layout.HamburgerMenuButton
 import com.example.appgrupo9.ui.components.layout.SideMenu
 
@@ -17,21 +16,29 @@ fun HomeScreenWithDrawer(
     onExplorar: () -> Unit,
     onPerfil: () -> Unit,
     onLogin: () -> Unit,
+    onRegister: () -> Unit,
     onLogout: () -> Unit,
     isLoggedIn: Boolean
 ) {
     SideMenu(
         onLoginClick = onLogin,
+        onRegisterClick = onRegister,
         onLogoutClick = onLogout,
-        onPerfilClick = onPerfil, // ← agregado
+        onPerfilClick = onPerfil,
         isLoggedIn = isLoggedIn
     ) { openDrawer ->
-        GlobalScaffold { innerPadding ->
-            Column(
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                HamburgerMenuButton(onClick = openDrawer)
-
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("LEVEL-UP STORE") },
+                    navigationIcon = {
+                        HamburgerMenuButton(onClick = openDrawer)
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                // Llamamos a la única versión de HomeContent
                 HomeContent(
                     ubicacion = ubicacion,
                     onExplorar = onExplorar,

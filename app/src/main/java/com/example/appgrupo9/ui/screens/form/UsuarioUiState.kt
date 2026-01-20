@@ -3,6 +3,7 @@ import com.example.appgrupo9.domain.validation.UsuarioErrores
 //Modelo principal que representa el estado del formulario del usuario
 data class UsuarioUiState(
     val nombre: String = " ",
+    val fullName: String = "",
     val correo: String = " ",
     val clave : String = " ",
     val direccion: String = " ",

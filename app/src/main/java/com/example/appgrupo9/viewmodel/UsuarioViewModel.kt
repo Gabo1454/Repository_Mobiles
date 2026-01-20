@@ -9,52 +9,64 @@ import kotlinx.coroutines.flow.update
 
 class UsuarioViewModel : ViewModel() {
 
-    //Estado interno mutable
+    // Estado interno mutable
     private val _estado = MutableStateFlow(UsuarioUiState())
 
-    //Estado expuesto para la UI
+    // Estado expuesto para la UI
     val estado: StateFlow<UsuarioUiState> = _estado
 
-    //Actualizar el campo nombre y limpia su error
+    // Actualizar Username
     fun onNombreChange(valor: String) {
         _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
     }
-    //Actualizar el campo correo
+
+    // Actualizar Nombre Completo (Nuevo campo coherente con Backend)
+    fun onFullNameChange(valor: String) {
+        _estado.update { it.copy(fullName = valor, errores = it.errores.copy(fullName = null)) }
+    }
+
+    // Actualizar Correo
     fun onCorreoChange(valor: String) {
-        _estado.update { it.copy(correo = valor, errores = it.errores.copy(correo = null))}
+        _estado.update { it.copy(correo = valor, errores = it.errores.copy(correo = null)) }
     }
-    //Actualizar el campo clave
+
+    // Actualizar Clave
     fun onClaveChange(valor: String) {
-        _estado.update { it.copy(clave = valor, errores = it.errores.copy(clave = null))}
+        _estado.update { it.copy(clave = valor, errores = it.errores.copy(clave = null)) }
     }
-    //Actualizar el campo clave
+
+    // Actualizar Dirección
     fun onDireccionChange(valor: String) {
-        _estado.update { it.copy(direccion = valor, errores = it.errores.copy(direccion = null))}
+        _estado.update { it.copy(direccion = valor, errores = it.errores.copy(direccion = null)) }
     }
-    //Actualizar checkbox de aceptacion
+
+    // Actualizar checkbox
     fun onAceptarTerminosChange(valor: Boolean) {
         _estado.update { it.copy(aceptarTerminos = valor) }
     }
 
-    //esto va aqui? si no se mueve xd
-    //Validacion global del formulario
+    // Validación global del formulario
     fun validarFormulario(): Boolean {
         val estadoActual = _estado.value
         val errores = UsuarioErrores(
             nombre = if (estadoActual.nombre.isBlank()) "Campo obligatorio" else null,
-            correo = if (!estadoActual.correo.contains("@")) "Correo invalido" else null,
-            clave = if (estadoActual.clave.length < 6) "Debe tener al menos 5 caracteres" else null,
+            fullName = if (estadoActual.fullName.isBlank()) "El nombre completo es obligatorio" else null,
+            correo = if (!estadoActual.correo.contains("@")) "Correo inválido" else null,
+            clave = if (estadoActual.clave.length < 6) "Debe tener al menos 6 caracteres" else null,
             direccion = if (estadoActual.direccion.isBlank()) "Campo obligatorio" else null
         )
 
+        // Verificamos si hay algún mensaje de error en la lista
         val hayErrores = listOfNotNull(
             errores.nombre,
+            errores.fullName,
             errores.correo,
-            errores.direccion,
-        ). isNotEmpty()
+            errores.clave,
+            errores.direccion
+        ).isNotEmpty()
 
         _estado.update { it.copy(errores = errores) }
 
-        return !hayErrores
+        return !hayErrores && estadoActual.aceptarTerminos
     }
 }

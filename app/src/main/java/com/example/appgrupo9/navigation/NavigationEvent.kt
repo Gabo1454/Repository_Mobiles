@@ -6,8 +6,8 @@ sealed class NavigationEvent {
     * */
 
     data class NavigateTo(
-        val route : Screen, // Ahora recibe un objeto AppDestination (mas antiguo)
-        val popUpToRoute: Screen? = null, //tambien acepta un objeto AppDestinations.
+        val route : String,
+        val popUpToRoute: String? = null,
         val inclusive : Boolean = false,
         val singleTop: Boolean = false
     ) : NavigationEvent()
